@@ -1,21 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TestApplication.DAL.Core;
 using TestApplication.DAL.Interfaces;
 using TestApplication.DAL.Repositories;
 
-namespace TestApplication.DAL.Extensions
+namespace TestApplication.DAL.Extensions;
+
+public static class Dependencies
 {
-    public static class Dependencies
+    public static void RegisterDependenciesForDAL(this IServiceCollection services, string connectionString)
     {
-        public static void RegisterDependenciesForDAL(this IServiceCollection services, IConfiguration configuration, string connectionName)
+        services.AddDbContext<MyTestApplicationContext>(options =>
         {
-            var connection = configuration.GetConnectionString(connectionName);
+            options.UseSqlServer(connectionString);
+        });
 
-            services.AddDbContext<TestApplicationContext>(options => options.UseSqlServer(connection));
-
-            services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
-        }
+        services.AddTransient(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
     }
 }

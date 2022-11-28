@@ -1,6 +1,6 @@
-﻿namespace TestApplication.DAL.Interfaces;
+﻿namespace TestApplication.BL.Interfaces;
 
-public interface IGenericRepository<TModel, TIdType>
+public interface IService<TModel, TIdType>
     where TModel : class
     where TIdType : notnull
 {
@@ -10,7 +10,7 @@ public interface IGenericRepository<TModel, TIdType>
 
     Task<int> DeleteAsync(TModel item);
 
-    Task<TModel> GetByIdAsync(TIdType id);
-
     Task<IEnumerable<TModel>> GetAllAsync();
+
+    Task<TModel> GetByIdAsync(TIdType id);
 }

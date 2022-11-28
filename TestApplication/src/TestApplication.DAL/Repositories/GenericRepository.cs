@@ -8,9 +8,9 @@ public class GenericRepository<TModel, TIdType> : IGenericRepository<TModel, TId
     where TModel : class
     where TIdType : notnull
 {
-    private readonly TestApplicationContext _context;
+    private readonly MyTestApplicationContext _context;
 
-    public GenericRepository(TestApplicationContext context)
+    public GenericRepository(MyTestApplicationContext context)
     {
         _context = context;
     }
@@ -31,7 +31,10 @@ public class GenericRepository<TModel, TIdType> : IGenericRepository<TModel, TId
         return rowsAffected;
     }
 
-    public async Task<IEnumerable<TModel>> GetAllAsync() => await _context.Set<TModel>().AsNoTracking().ToListAsync();
+    public async Task<IEnumerable<TModel>> GetAllAsync()
+    {
+        return await _context.Set<TModel>().AsNoTracking().ToListAsync();
+    }
 
     public async Task<TModel> GetByIdAsync(TIdType id)
     {
@@ -42,14 +45,6 @@ public class GenericRepository<TModel, TIdType> : IGenericRepository<TModel, TId
         }
 
         return entity;
-    }
-
-    public IEnumerable<TModel> GetByParam(string paramName, object value)
-    {
-        var collection = _context.Set<TModel>().AsEnumerable();
-        var data = collection.Where(x => x.GetType().GetProperty(paramName).GetValue(x).Equals(value));
-
-        return data;
     }
 
     public async Task<int> UpdateAsync(TModel item)

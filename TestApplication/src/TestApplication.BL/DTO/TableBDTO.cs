@@ -1,8 +1,8 @@
-﻿namespace TestApplication.DAL.Entities;
+﻿namespace TestApplication.BL.DTO;
 
-public class TableB
+public class TableBDTO
 {
-    public int Id { get; set;  }
+    public int Id { get; }
 
     public int ColB1 { get; set; }
 
