@@ -17,7 +17,7 @@ internal class DatabaseRepository
 
     public async Task ConnectionAsync()
     {
-        var database = new CreateDatabase(_databaseName);
+        var database = new DatabaseService(_databaseName);
         if (!await database.IsExistAsync())
         {
             await database.CreateDatabaseAsync();
@@ -57,26 +57,26 @@ internal class DatabaseRepository
             return new List<RetrievedDataModel>();
         }
 
-        var databseData = new List<RetrievedDataModel>();
+        var databaseData = new List<RetrievedDataModel>();
 
         for (int i = 0; i < reader.FieldCount; i++)
         {
-            var typeName = reader.GetDataTypeName(i);
-            if (typeName == "int")
+            var fieldType = reader.GetFieldType(i);
+            if (fieldType == typeof(int))
             {
                 var retrievedData = new RetrievedDataModel { ColumnName = reader.GetName(i), Values = new List<int>() };
-                databseData.Add(retrievedData);
+                databaseData.Add(retrievedData);
             }
         }
 
         while (await reader.ReadAsync())
         {
-            for (int i = 0; i < databseData.Count; i++)
+            for (int i = 0; i < databaseData.Count; i++)
             {
-                databseData[i].Values.Add(reader.GetInt32(databseData[i].ColumnName));
+                databaseData[i].Values.Add(reader.GetInt32(databaseData[i].ColumnName));
             }
         }
 
-        return databseData;
+        return databaseData;
     }
 }
