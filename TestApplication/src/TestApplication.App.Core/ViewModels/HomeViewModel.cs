@@ -1,7 +1,6 @@
 ﻿using MvvmCross.Commands;
 using MvvmCross.ViewModels;
 using System.Collections.ObjectModel;
-using System.Security;
 using TestApplication.DesktopApp.Core.Database;
 using TestApplication.DesktopApp.Core.Models;
 
@@ -12,8 +11,6 @@ public class HomeViewModel : MvxViewModel
     private ObservableCollection<RetrievedDataModel> _retrievedData;
     private bool _isConnected;
     private bool _isLoaded;
-    private string _login = string.Empty;
-    private SecureString _password = new SecureString();
 
     private DatabaseRepository _databaseRepository;
 
@@ -62,32 +59,8 @@ public class HomeViewModel : MvxViewModel
         }
     }
 
-    public string Login
-    {
-        get { return _login; }
-        set
-        {
-            SetProperty(ref _login, value);
-        }
-    }
-
-    public SecureString Password
-    {
-        get 
-        {
-            _password.MakeReadOnly();
-            return _password; 
-        }
-        set
-        {
-            SetProperty(ref _password, value);
-        }
-    }
-
     public async Task ConnectionAsync()
     {
-        var user = new UserModel { Login = Login, Password = Password };
-
         _databaseRepository = new DatabaseRepository("DevData");
         await _databaseRepository.ConnectionAsync();
 
@@ -96,8 +69,7 @@ public class HomeViewModel : MvxViewModel
 
     public async Task LoadDataAsync()
     {
-        var user = new UserModel { Login = Login, Password = Password };
-        var data = await _databaseRepository.GetDataAsync(user);
+        var data = await _databaseRepository.GetDataAsync();
 
         RetrievedData = new ObservableCollection<RetrievedDataModel>(data.ToList());
     }

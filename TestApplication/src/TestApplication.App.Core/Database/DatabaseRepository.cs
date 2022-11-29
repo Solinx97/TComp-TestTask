@@ -26,30 +26,29 @@ internal class DatabaseRepository
         _connectionString = database.GetConnectionString();
     }
 
-    public async Task<IEnumerable<RetrievedDataModel>> GetDataAsync(UserModel user)
+    public async Task<IEnumerable<RetrievedDataModel>> GetDataAsync()
     {
         var result = new List<RetrievedDataModel>();
 
-        var data = await GetDataOnlyByIntAsync(user, "Table_A");
+        var data = await GetDataOnlyByIntAsync("Table_A");
         result.AddRange(data);
 
-        data = await GetDataOnlyByIntAsync(user, "Table_B");
+        data = await GetDataOnlyByIntAsync("Table_B");
         result.AddRange(data);
 
-        data = await GetDataOnlyByIntAsync(user, "Table_C");
+        data = await GetDataOnlyByIntAsync("Table_C");
         result.AddRange(data);
 
         return result;
     }
 
-    private async Task<IEnumerable<RetrievedDataModel>> GetDataOnlyByIntAsync(UserModel user, string tableName)
+    private async Task<IEnumerable<RetrievedDataModel>> GetDataOnlyByIntAsync(string tableName)
     {
         using var connection = new SqlConnection(_connectionString);
 
         var query = $"SELECT * FROM {tableName}";
         var command = new SqlCommand(query, connection);
 
-        connection.Credential = new SqlCredential(user.Login, user.Password);
         await connection.OpenAsync();
         using var reader = await command.ExecuteReaderAsync();
 

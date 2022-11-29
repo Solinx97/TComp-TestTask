@@ -1,6 +1,4 @@
-﻿using TestApplication.DesktopApp.Core.Models;
-
-namespace TestApplication.DesktopApp.Core.Interfaces;
+﻿namespace TestApplication.DesktopApp.Core.Interfaces;
 
 public interface IDatabaseService
 {

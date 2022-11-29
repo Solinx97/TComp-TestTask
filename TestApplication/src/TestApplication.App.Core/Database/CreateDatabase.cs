@@ -13,7 +13,7 @@ public class CreateDatabase : IDatabaseService
     {
         _databaseName = databaseName;
 
-        _connectionString = $"Server=(localdb)\\MSSQLLocalDB;Database=master;Trusted_Connection=False;MultipleActiveResultSets=true";
+        _connectionString = $"Server=(localdb)\\MSSQLLocalDB;Database=master;Trusted_Connection=True;;MultipleActiveResultSets=true";
     }
 
     public async Task<bool> IsExistAsync()
@@ -59,6 +59,7 @@ public class CreateDatabase : IDatabaseService
     public string GetConnectionString()
     {
         var connectionString = $"Server=(localdb)\\MSSQLLocalDB;Database={_databaseName};Trusted_Connection=True;MultipleActiveResultSets=true";
+
         return connectionString;
     }
 
