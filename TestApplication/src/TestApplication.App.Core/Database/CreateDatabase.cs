@@ -1,5 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
-using System.Data;
+﻿using System.Data;
+using System.Data.SqlClient;
 using TestApplication.DesktopApp.Core.Interfaces;
 
 namespace TestApplication.DesktopApp.Core.Database;
@@ -13,7 +13,7 @@ public class CreateDatabase : IDatabaseService
     {
         _databaseName = databaseName;
 
-        _connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=master;Trusted_Connection=True;MultipleActiveResultSets=true";
+        _connectionString = $"Server=(localdb)\\MSSQLLocalDB;Database=master;Trusted_Connection=False;MultipleActiveResultSets=true";
     }
 
     public async Task<bool> IsExistAsync()

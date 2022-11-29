@@ -4,6 +4,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:converters="clr-namespace:TestApplication.DesktopApp.Converters"
       xmlns:local="clr-namespace:TestApplication.DesktopApp.Views"
       xmlns:views="clr-namespace:MvvmCross.Platforms.Wpf.Views;assembly=MvvmCross.Platforms.Wpf"
       mc:Ignorable="d" d:Height="700" d:Width="1200">
@@ -21,6 +22,10 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <Grid.Resources>
+            <converters:TheNativeBoolToVisibilityConverter x:Key="BoolToVisibility" />
+        </Grid.Resources>
+        
         <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -35,30 +40,40 @@
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Database Login" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10"/>
             <StackPanel Grid.Row="1" Grid.Column="0" Margin="5">
                 <TextBlock Text="Name" HorizontalAlignment="Center" Margin="10"/>
-                <TextBox Width="175"/>
+                <TextBox Text="{Binding Login}" Width="175"/>
             </StackPanel>
             <StackPanel Grid.Row="1" Grid.Column="1" Margin="5">
                 <TextBlock Text="Password" HorizontalAlignment="Center" Margin="10"/>
-                <TextBox Width="175"/>
+                <PasswordBox PasswordChanged="PasswordBox_PasswordChanged" Width="175"/>
             </StackPanel>
-            <Button Grid.Row="0" Grid.Column="1" Content="Connect" Height="25" Width="125" Margin="5"
-                    Command="{Binding ConnectionToDBCommand}"/>
+            <Button Grid.Row="0" Grid.Column="1" Content="Test connection" Height="25" Width="125" Margin="5"
+                    Command="{Binding TestConnectionCommand}"/>
 
-            <StackPanel Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" Visibility="Hidden">
+            <StackPanel Grid.Row="0" Grid.Column="3" VerticalAlignment="Center"
+                        Visibility="{Binding IsConnected, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"
                            Foreground="Orange" Text="Ups, something wrong. Check your login and/or password and try to connect after a while."/>
                 <TextBlock Foreground="Green" TextAlignment="Center" Text="Successful connection."/>
             </StackPanel>
-            
-            <StackPanel Grid.Row="1" Grid.Column="2" Margin="5">
-                <TextBlock Text="Connect to database" HorizontalAlignment="Center" Margin="10"/>
-                <Button Content="Connect" Width="125"/>
+
+            <StackPanel Grid.Row="1" Grid.Column="2" Margin="5"
+                        Visibility="{Binding IsConnected, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+                <TextBlock Text="Getting data" HorizontalAlignment="Center" Margin="10"/>
+                <Button Content="Load data" Width="125" Command="{Binding LoadDataCommand}"/>
             </StackPanel>
         </Grid>
 
-        <DataGrid Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="3"
+        <StackPanel Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="3"
+                    Visibility="{Binding IsLoaded, Converter={StaticResource BoolToVisibility}, ConverterParameter=true:false}">
+            <TextBlock Text="Content" Margin="10"/>
+            <TreeView 
                   ItemsSource="{Binding RetrievedData}">
-            
-        </DataGrid>
+                <TreeView.ItemTemplate>
+                    <DataTemplate>
+                        <TreeViewItem IsExpanded="True" Header="{Binding Path=ColumnName}" ItemsSource="{Binding Path=Values}"/>
+                    </DataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+        </StackPanel>
     </Grid>
 </views:MvxWpfView>

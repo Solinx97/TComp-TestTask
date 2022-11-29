@@ -1,5 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
-using System.Data;
+﻿using System.Data;
+using System.Data.SqlClient;
 using TestApplication.DesktopApp.Core.Models;
 
 namespace TestApplication.DesktopApp.Core.Database;
@@ -26,20 +26,36 @@ internal class DatabaseRepository
         _connectionString = database.GetConnectionString();
     }
 
-    public async Task<List<RetrievedDataModel>> GetDataAsync()
+    public async Task<IEnumerable<RetrievedDataModel>> GetDataAsync(UserModel user)
+    {
+        var result = new List<RetrievedDataModel>();
+
+        var data = await GetDataOnlyByIntAsync(user, "Table_A");
+        result.AddRange(data);
+
+        data = await GetDataOnlyByIntAsync(user, "Table_B");
+        result.AddRange(data);
+
+        data = await GetDataOnlyByIntAsync(user, "Table_C");
+        result.AddRange(data);
+
+        return result;
+    }
+
+    private async Task<IEnumerable<RetrievedDataModel>> GetDataOnlyByIntAsync(UserModel user, string tableName)
     {
         using var connection = new SqlConnection(_connectionString);
 
-        var query = "SELECT * FROM Table_A, Table_B, Table_C";
-
+        var query = $"SELECT * FROM {tableName}";
         var command = new SqlCommand(query, connection);
 
+        connection.Credential = new SqlCredential(user.Login, user.Password);
         await connection.OpenAsync();
         using var reader = await command.ExecuteReaderAsync();
 
         if (!reader.HasRows)
         {
-            return null;
+            return new List<RetrievedDataModel>();
         }
 
         var databseData = new List<RetrievedDataModel>();
@@ -54,15 +70,12 @@ internal class DatabaseRepository
             }
         }
 
-        var count = 0;
         while (await reader.ReadAsync())
         {
             for (int i = 0; i < databseData.Count; i++)
             {
                 databseData[i].Values.Add(reader.GetInt32(databseData[i].ColumnName));
             }
-
-            count++;
         }
 
         return databseData;
