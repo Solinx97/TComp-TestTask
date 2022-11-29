@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using TestApplication.DesktopApp.Core.Consts;
 using TestApplication.DesktopApp.Core.Interfaces;
 
 namespace TestApplication.DesktopApp.Core.Database;
@@ -8,7 +9,7 @@ public class DatabaseService : IDatabaseService
 {
     private readonly string _databaseName;
 
-    private string _connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=master;Trusted_Connection=False;MultipleActiveResultSets=true";
+    private string _connectionString = DatabaseConsts.DefaultConnectionString;
 
     public DatabaseService(string databaseName)
     {
